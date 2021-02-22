@@ -37,3 +37,7 @@ Features:
 
 The following is result of Event Storming Session:  
 ![Event Storming](./docs/es.jpg)  
+
+### Road-map
+
+For road-map, tho popular tags feture can be implemented in later releases.
