@@ -17,7 +17,8 @@ For example, if the system was parsing the sports page:
 `http://bbc.com/news/sport/1234/real-barsa-el-clasico`  
 where a match between Barcelona and Real Madrid was being reviewed then words like ‘soccer’, ‘referee’, ‘Barcelona’, ‘Real Madrid’ would be the keywords that repeat more than twice in the text.  
 The system should suggest a maximum of 10 and a minimum of 1 top keywords sorted from those with the highest number of occurrences to the lowest.  
-The following links are the same:  
+These keywords would then be suggestions for new tags for this specific URL.  
+The API should handle the following links, as they are the same:  
     `www.example.com/?foo=bar&hello=world`  
     `http://www.example.com/?foo=bar&hello=world`  
     `http://www.example.com/?hello=world&foo=bar`  
@@ -27,9 +28,12 @@ Features:
 + Get all links for the authenticated user.
 + Search links for the authenticated user by tags.
 + Get suggested tags for existing link by other users sorted by number of occurrences.
-+ Get suggested tags for existing link, based on the link content analysis.
++ Get suggested tags for existing link, based on the link content analysis. - mandatory
 + Add tags to a link.
 
 ## Solution
 
 ### Event Storming
+
+The following is result of Event Storming Session:  
+![Event Storming](./docs/es.jpg)  
