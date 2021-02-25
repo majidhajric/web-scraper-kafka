@@ -12,6 +12,7 @@ import org.apache.lucene.analysis.standard.ClassicFilter;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.jsoup.Jsoup;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -38,8 +39,7 @@ public class LuceneScrapingService implements ScrapingService {
             .followRedirects(HttpClient.Redirect.ALWAYS)
             .build();
 
-    private HttpResponse<String> loadHtmlPage(URI uri)
-            throws IOException, InterruptedException {
+    private HttpResponse<String> loadHtmlPage(URI uri) throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(uri)
                 .timeout(Duration.ofMinutes(1))
@@ -100,6 +100,8 @@ public class LuceneScrapingService implements ScrapingService {
             throws URISyntaxException, IOException, InterruptedException {
         String body = loadHtmlPage(new URI(pageURL)).body();
         String content = extractContent(body);
-        return analyzeContent(content);
+        List<String> keywords = analyzeContent(content);
+
+        return keywords;
     }
 }
