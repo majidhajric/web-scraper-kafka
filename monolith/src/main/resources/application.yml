@@ -6,3 +6,6 @@ spring:
   redis:
     host: localhost
     port: 6379
+keycloak:
+  auth-server-url: localhost:9090
+  realm: scraper

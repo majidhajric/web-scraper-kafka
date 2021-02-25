@@ -12,25 +12,74 @@ services:
       - demo-net
 
 
-  mongo:
-    image: mongo
+  postgres:
+    image: majidhajric/localhost-postgres:latest
+    container_name: localhost-postgres
+    build:
+      context: ./postgresql
+      args:
+        - PORT=${POSTGRES_PORT}
+        - USER_ID=$USER_ID
     restart: always
     environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: example
-    networks:
-      - demo-net
-
-  mongo-express:
-    image: mongo-express
-    restart: always
+      - "POSTGRES_PASSWORD=${POSTGRES_PASSWORD}"
+      - "POSTGRES_USER=${USER}"
+      - "POSTGRES_NON_ROOT_USER=${USER}"
+      - "POSTGRES_NON_ROOT_USER_PASSWORD=${POSTGRES_PASSWORD}"
+      - "AUTH_DATABASE_NAME=${AUTHENTICATION_DATABASE_NAME}"
+      - "AUTH_DATABASE_USER=${AUTHENTICATION_DATABASE_USER}"
+      - "AUTH_DATABASE_PASSWORD=${AUTHENTICATION_DATABASE_PASSWORD}"
+      - "RESOURCE_DATABASE_NAME=${SUGGESTIONS_DATABASE_NAME}"
+      - "RESOURCE_DATABASE_USER=${SUGGESTIONS_DATABASE_USER}"
+      - "RESOURCE_DATABASE_PASSWORD=${SUGGESTIONS_DATABASE_PASSWORD}"
     ports:
-      - 8081:8081
-    environment:
-      ME_CONFIG_MONGODB_ADMINUSERNAME: root
-      ME_CONFIG_MONGODB_ADMINPASSWORD: example
-    networks:
-      - demo-net
+      - "${POSTGRES_PORT}:${POSTGRES_PORT}"
+    volumes:
+      - "./localhost-env/postgresql/data:/var/lib/postgresql/data"
+
+    mongodb:
+      image: majidhajric/localhost-mongo:latest
+      container_name: localhost-mongodb
+      build:
+        context: ./mongodb
+        args:
+          - PORT=${MONGODB_PORT}
+          - USER_ID=$USER_ID
+      restart: always
+      environment:
+        - "MONGO_INITDB_DATABASE=${LINK_MANAGER_DATABASE_NAME}"
+        - "MONGO_INITDB_ROOT_USERNAME=${USER}"
+        - "MONGO_INITDB_ROOT_PASSWORD=${MONGODB_PASSWORD}"
+        - "RESOURCE_DATABASE_NAME=${WEB_SCRAPER_DATABASE_NAME}"
+        - "RESOURCE_DATABASE_USER=${WEB_SCRAPER__DATABASE_USER}"
+        - "RESOURCE_DATABASE_PASSWORD=${WEB_SCRAPER_DATABASE_PASSWORD}"
+      ports:
+        - "${MONGODB_PORT}:${MONGODB_PORT}"
+      volumes:
+        - "./localhost-env/mongodb/data:/data/db"
+
+    authentication-server:
+      image: majidhajric/authentication-server:latest
+      container_name: authentication-server
+      build:
+        context: ./authentication-server
+        args:
+          - PORT=${AUTHENTICATION_SERVER_PORT}
+      ports:
+        - "${AUTHENTICATION_SERVER_PORT}:${AUTHENTICATION_SERVER_PORT}"
+      environment:
+        - "PORT=${AUTHENTICATION_SERVER_PORT}"
+        - "KEYCLOAK_USER=${USER}"
+        - "KEYCLOAK_PASSWORD=${KEYCLOAK_PASSWORD}"
+        - "DB_VENDOR=POSTGRES"
+        - "DB_ADDR=localhost-postgres"
+        - "DB_PORT=${POSTGRES_PORT}"
+        - "DB_DATABASE=${AUTHENTICATION_DATABASE_NAME}"
+        - "DB_USER=${AUTHENTICATION_DATABASE_USER}"
+        - "DB_PASSWORD=${AUTHENTICATION_DATABASE_PASSWORD}"
+        - "PROXY_ADDRESS_FORWARDING=true"
+      depends_on:
+        - postgres
 
   scraper:
     build:
@@ -40,10 +89,6 @@ services:
       - 8080:8080
     depends_on:
       - redis
-    networks:
-      - demo-net
-
 
 networks:
-  demo-net:
-    driver: bridge
+  default:

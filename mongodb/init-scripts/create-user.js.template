@@ -1,0 +1,10 @@
+db.createUser(
+    {
+        user: "${RESOURCE_DATABASE_USER}",
+        pwd: "${RESOURCE_DATABASE_PASSWORD}",
+        roles: [
+            {role: "readWrite", db: "${RESOURCE_DATABASE_NAME}"},
+            {role: "dbAdmin", db: "${RESOURCE_DATABASE_NAME}"}
+        ]
+    }
+);
