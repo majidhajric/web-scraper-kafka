@@ -12,9 +12,7 @@ import org.apache.lucene.analysis.standard.ClassicFilter;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
+import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -30,10 +28,10 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Slf4j
+@Service
 public class LuceneScrapingService implements ScrapingService {
 
     private final HttpClient client = HttpClient.newBuilder()
