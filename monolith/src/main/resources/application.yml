@@ -6,6 +6,14 @@ spring:
   redis:
     host: localhost
     port: 6379
+
+  data:
+    mongodb:
+      user: scraper_db_user
+      password: scraper_db_s3cr3t
+      uri: mongodb://localhost:27017/scraper_db
+
 keycloak:
   auth-server-url: localhost:9090
   realm: scraper
+
