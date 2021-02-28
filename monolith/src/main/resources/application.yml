@@ -13,7 +13,10 @@ spring:
       password: scraper_db_s3cr3t
       uri: mongodb://localhost:27017/scraper_db
 
-keycloak:
-  auth-server-url: localhost:9090
-  realm: scraper
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          #issuer-uri: http://localhost:8083/auth/realms/scraper
+          jwk-set-uri: http://localhost:9090/auth/realms/scraper/protocol/openid-connect/certs
 

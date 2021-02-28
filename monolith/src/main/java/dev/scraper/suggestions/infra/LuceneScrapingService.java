@@ -12,18 +12,12 @@ import org.apache.lucene.analysis.standard.ClassicFilter;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.jsoup.Jsoup;
-import org.springframework.data.redis.core.RedisTemplate;
+import org.jsoup.nodes.Document;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.io.StringReader;
-import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.nio.charset.StandardCharsets;
-import java.time.Duration;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -34,24 +28,6 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 public class LuceneScrapingService implements ScrapingService {
-
-    private final HttpClient client = HttpClient.newBuilder()
-            .followRedirects(HttpClient.Redirect.ALWAYS)
-            .build();
-
-    private HttpResponse<String> loadHtmlPage(URI uri) throws IOException, InterruptedException {
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(uri)
-                .timeout(Duration.ofMinutes(1))
-                .header("Content-Type", "text/html; charset=UTF-8")
-                .GET()
-                .build();
-        return client.send(request, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
-    }
-
-    private String extractContent(String html) {
-        return Jsoup.parse(html).body().data();
-    }
 
     private List<String> analyzeContent(String content) {
         Map<String, Integer> keywords = new HashMap<>();
@@ -92,15 +68,26 @@ public class LuceneScrapingService implements ScrapingService {
         return keywords.entrySet().stream()
                         .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
                         .map(Map.Entry::getKey)
+                        .limit(10)
                         .collect(Collectors.toCollection(LinkedList::new));
     }
 
     @Override
     public List<String> extractKeywords(String pageURL)
             throws URISyntaxException, IOException, InterruptedException {
-        String body = loadHtmlPage(new URI(pageURL)).body();
-        String content = extractContent(body);
-        List<String> keywords = analyzeContent(content);
+        Document document= Jsoup.connect(pageURL).get();
+        String bodyText = document.getElementsByTag("article").text();
+
+        List<String> keywords = analyzeContent(bodyText);
+
+        return keywords;
+    }
+
+    public List<String> extractKeywordsFromHtml(String html) {
+        Document document= Jsoup.parse(html);
+        String bodyText = document.getElementsByTag("body").text();
+
+        List<String> keywords = analyzeContent(bodyText);
 
         return keywords;
     }

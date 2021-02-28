@@ -1,7 +1,10 @@
 package dev.scraper.suggestions.api;
 
-import dev.scraper.suggestions.domain.ScrapingService;
+import dev.scraper.suggestions.domain.Link;
+import dev.scraper.suggestions.domain.SuggestionService;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,29 +16,29 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.List;
 
 @RestController
 @RequestMapping(path = "/api/suggestions")
 @ControllerAdvice
 public class SuggestionsController {
 
-    private final ScrapingService scrapingService;
+ private final SuggestionService suggestionService;
 
-    public SuggestionsController(ScrapingService scrapingService) {
-        this.scrapingService = scrapingService;
+    public SuggestionsController(SuggestionService suggestionService) {
+        this.suggestionService = suggestionService;
     }
 
     @GetMapping
-    public List<String> getSuggestions(@RequestParam String pageURL)
+    public Link getSuggestions(@RequestParam(name = "pageURL") String pageURL, @AuthenticationPrincipal Jwt jwt)
             throws InterruptedException, IOException, URISyntaxException {
-        return scrapingService.extractKeywords(pageURL);
+        String userId = jwt.getClaim("sub");
+        return suggestionService.createSuggestion(userId, pageURL);
     }
 
     @ResponseBody
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public String employeeNotFoundHandler(Exception ex) {
+    public String exceptionsHandler(Exception ex) {
         return ex.getMessage();
     }
 }

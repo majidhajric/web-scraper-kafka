@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.ToString;
 import lombok.extern.log4j.Log4j2;
 
+import java.io.Serializable;
 import java.math.BigInteger;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -18,7 +19,7 @@ import java.util.stream.Stream;
 @Getter
 @ToString
 @EqualsAndHashCode(of = "uri")
-public class PageURL {
+public class PageURL implements Serializable {
 
     private static final String DEFAULT_SCHEME = "https";
     private final String url;
