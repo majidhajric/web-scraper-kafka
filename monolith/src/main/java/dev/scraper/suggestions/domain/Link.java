@@ -27,7 +27,7 @@ public class Link implements Serializable {
     private static final String DEFAULT_SCHEME = "https";
 
     @MongoId
-    private String Id;
+    private String id;
 
     private String userId;
 

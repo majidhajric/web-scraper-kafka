@@ -1,15 +1,20 @@
 package dev.scraper.management.api;
 
-import dev.scraper.management.infra.MongoLinkRepository;
+import dev.scraper.management.domain.LinksService;
 import dev.scraper.suggestions.domain.Link;
-import dev.scraper.suggestions.domain.SuggestionsCache;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -19,29 +24,40 @@ import java.util.List;
 @ControllerAdvice
 public class LinksController {
 
-    private final SuggestionsCache suggestionsCache;
+    private final LinksService linksService;
 
-    private final MongoLinkRepository linkRepository;
+    public LinksController(LinksService linksService) {
+        this.linksService = linksService;
+    }
 
-    public LinksController(SuggestionsCache suggestionsCache, MongoLinkRepository linkRepository) {
-        this.suggestionsCache = suggestionsCache;
-        this.linkRepository = linkRepository;
+    private String getUserId(Jwt jwt) {
+        return (String) jwt.getClaims().get("sub");
     }
 
     @PostMapping
     public Link createLink(@RequestBody Link link, @AuthenticationPrincipal Jwt jwt) {
-        String userId = (String) jwt.getClaims().get("sub");
-        Link cachedLink = suggestionsCache.findById(userId);
-        if (!cachedLink.getPageURL().equals(cachedLink.getPageURL()) || !cachedLink.getTags().containsAll(link.getTags())) {
-            throw new RuntimeException("Invalid Link");
-        }
-        link = linkRepository.save(link);
-        return link;
+        String userId = (String) getUserId(jwt);
+        return linksService.createLink(userId, link);
+    }
+
+    @PutMapping(path = "/{id}")
+    public Link updateLink(@RequestBody Link link, @AuthenticationPrincipal Jwt jwt) {
+        String userId = (String) getUserId(jwt);
+        return linksService.updateLink(userId, link);
     }
 
     @GetMapping(path = "/all")
-    public List<Link> getAllLinks(@AuthenticationPrincipal Jwt jwt) {
-        String userId = (String) jwt.getClaims().get("sub");
-        return linkRepository.findAllByUserId(userId);
+    public List<Link> getAllLinks(@RequestParam(required = false, defaultValue = "0") Integer page,
+                                  @RequestParam( required = false, defaultValue = "5") Integer size,
+                                  @AuthenticationPrincipal Jwt jwt) {
+        String userId = (String) getUserId(jwt);
+        Pageable paging = PageRequest.of(page, size);
+        return linksService.getAllLinks(userId, paging).getContent();
+    }
+
+    @DeleteMapping(path = "/{id}")
+    public void deleteLink(@PathVariable String id, @AuthenticationPrincipal Jwt jwt) {
+        String userId = (String) getUserId(jwt);
+        linksService.deleteLink(id, userId);
     }
 }
