@@ -7,6 +7,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class LinksService {
 
@@ -21,8 +23,12 @@ public class LinksService {
 
     public Link createLink(String userId, Link link) {
         Link cachedLink = suggestionsCache.findById(userId);
-        if (!cachedLink.getPageURL().equals(cachedLink.getPageURL()) || !cachedLink.getTags().containsAll(link.getTags())) {
+        if (!cachedLink.getPageHash().equals(link.getPageHash()) || !cachedLink.getTags().containsAll(link.getTags())) {
             throw new RuntimeException("Invalid Link");
+        }
+        Optional<Link> optionalLink = linkRepository.findByUserIdAndPageHash(userId, link.getPageHash());
+        if (optionalLink.isPresent()){
+            throw new RuntimeException("Link already exists");
         }
         link = linkRepository.save(link);
         return link;

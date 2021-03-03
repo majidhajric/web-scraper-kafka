@@ -35,9 +35,39 @@ Features:
 
 ### Event Storming
 
-The following is result of Event Storming Session:  
+The following is result of Event Storming Session:
 ![Event Storming](./docs/es.jpg)  
 
 ### Road-map
 
-For road-map, tho popular tags feture can be implemented in later releases.
+For road-map, tho popular tags feture can be implemented in later releases.For this feature Kafka can be used.  
+
+### Implementation
+
+Initial release is implemented as monolith with possibility to extent to two microservices. Package structure is
+organized in this way. 
+Other dependencies of this project are:
+
+1. MongoDB - for storing Links
+2. Redis - for validation
+3. Keycloak - authentication server
+4. Postgres - user database
+
+### Running 
+
+There is docker-compose file for all dependencies and needs to be up and running before running scraper application.  
+
+Api documentation page is located at:
+`http://localhost:8080/v3/api-docs`
+
+Following are screenshots of link creation process:  
+
+![Get Suggestions](./docs/get.jpg) 
+
+And result as JSON which is then used as body to persist link:  
+
+![Suggestions](./docs/suggestions.jpg) 
+
+To gett all user links, there is Pagebale interface in the LinksController:  
+
+![Links](./docs/links.jpg) 

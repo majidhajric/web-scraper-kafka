@@ -7,6 +7,7 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface MongoLinkRepository extends MongoRepository<Link, String> {
@@ -18,6 +19,8 @@ public interface MongoLinkRepository extends MongoRepository<Link, String> {
     Page<Link> findAllByUserId(String userId, Pageable pageable);
 
     List<Link> findAllByUserId(String userId);
+
+    Optional<Link> findByUserIdAndPageHash(String userId, String pageHash);
 
     List<Link> findAllByTagsContaining(String tag);
 }
