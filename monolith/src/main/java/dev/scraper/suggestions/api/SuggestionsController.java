@@ -29,6 +29,7 @@ public class SuggestionsController {
     }
 
     @GetMapping
+    @ResponseStatus(code = HttpStatus.OK)
     public Link getSuggestions(@RequestParam(name = "pageURL") String pageURL, @AuthenticationPrincipal Jwt jwt)
             throws InterruptedException, IOException, URISyntaxException {
         String userId = jwt.getClaim("sub");
