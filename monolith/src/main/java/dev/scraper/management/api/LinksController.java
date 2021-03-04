@@ -45,9 +45,9 @@ public class LinksController {
 
     @PutMapping(path = "/{id}")
     @ResponseStatus(code = HttpStatus.OK)
-    public Link updateLink(@RequestBody Link link, @AuthenticationPrincipal Jwt jwt) {
+    public Link updateLink(@PathVariable String id, @RequestBody Link link, @AuthenticationPrincipal Jwt jwt) {
         String userId = (String) getUserId(jwt);
-        return linksService.updateLink(userId, link);
+        return linksService.updateLink(id,userId, link);
     }
 
     @GetMapping(path = "/all")
@@ -58,6 +58,14 @@ public class LinksController {
         String userId = (String) getUserId(jwt);
         Pageable paging = PageRequest.of(page, size);
         return linksService.getAllLinks(userId, paging).getContent();
+    }
+
+    @GetMapping(path = "/search")
+    @ResponseStatus(code = HttpStatus.OK)
+    public List<Link> getAllLinks(@RequestParam String tag,
+                                  @AuthenticationPrincipal Jwt jwt) {
+        String userId = (String) getUserId(jwt);
+        return linksService.searchLinks(userId, tag);
     }
 
     @DeleteMapping(path = "/{id}")

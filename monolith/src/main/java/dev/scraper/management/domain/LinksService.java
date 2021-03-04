@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -34,12 +35,16 @@ public class LinksService {
         return link;
     }
 
-    public Link updateLink(String userId, Link link) {
-        Link cachedLink = suggestionsCache.findById(userId);
-        if (!cachedLink.getPageURL().equals(cachedLink.getPageURL()) || !cachedLink.getTags().containsAll(link.getTags())) {
+    public Link updateLink(String id, String userId, Link link) {
+        if (!id.equals(link.getId())){
             throw new RuntimeException("Invalid Link");
         }
-        Link existingLink = linkRepository.findById(link.getId()).orElseThrow(RuntimeException::new);
+
+        Link cachedLink = suggestionsCache.findById(userId);
+        if (!cachedLink.getPageHash().equals(link.getPageHash()) || !cachedLink.getTags().containsAll(link.getTags())) {
+            throw new RuntimeException("Invalid Link");
+        }
+        Link existingLink = linkRepository.findById(id).orElseThrow(RuntimeException::new);
         link = linkRepository.save(link);
         return link;
     }
@@ -52,4 +57,7 @@ public class LinksService {
         return linkRepository.findAllByUserId(userId, paging);
     }
 
+    public List<Link> searchLinks(String userId, String tag) {
+        return linkRepository.findAllByUserIdAndTagsContaining(userId, tag);
+    }
 }

@@ -22,5 +22,5 @@ public interface MongoLinkRepository extends MongoRepository<Link, String> {
 
     Optional<Link> findByUserIdAndPageHash(String userId, String pageHash);
 
-    List<Link> findAllByTagsContaining(String tag);
+    List<Link> findAllByUserIdAndTagsContaining(String userId, String tag);
 }
