@@ -1,7 +1,7 @@
 package dev.scraper.management.domain;
 
 import dev.scraper.management.infra.MongoLinkRepository;
-import dev.scraper.suggestions.domain.Link;
+import dev.scraper.common.Link;
 import dev.scraper.suggestions.domain.SuggestionsCache;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

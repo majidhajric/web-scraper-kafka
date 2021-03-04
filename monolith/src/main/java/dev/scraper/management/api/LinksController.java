@@ -1,7 +1,7 @@
 package dev.scraper.management.api;
 
 import dev.scraper.management.domain.LinksService;
-import dev.scraper.suggestions.domain.Link;
+import dev.scraper.common.Link;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;

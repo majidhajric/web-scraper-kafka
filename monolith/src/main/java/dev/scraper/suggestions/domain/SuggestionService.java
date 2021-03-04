@@ -1,5 +1,6 @@
 package dev.scraper.suggestions.domain;
 
+import dev.scraper.common.Link;
 import dev.scraper.management.infra.MongoLinkRepository;
 import org.springframework.stereotype.Service;
 

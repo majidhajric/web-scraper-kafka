@@ -1,6 +1,6 @@
 package dev.scraper.suggestions.api;
 
-import dev.scraper.suggestions.domain.Link;
+import dev.scraper.common.Link;
 import dev.scraper.suggestions.domain.SuggestionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;

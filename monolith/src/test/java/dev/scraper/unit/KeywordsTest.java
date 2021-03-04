@@ -1,4 +1,4 @@
-package dev.scraper.unit.suggestions;
+package dev.scraper.unit;
 
 import dev.scraper.suggestions.infra.LuceneScrapingService;
 import io.micrometer.core.instrument.util.IOUtils;

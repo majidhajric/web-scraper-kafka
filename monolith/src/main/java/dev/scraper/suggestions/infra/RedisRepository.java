@@ -1,6 +1,6 @@
 package dev.scraper.suggestions.infra;
 
-import dev.scraper.suggestions.domain.Link;
+import dev.scraper.common.Link;
 import dev.scraper.suggestions.domain.SuggestionsCache;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;

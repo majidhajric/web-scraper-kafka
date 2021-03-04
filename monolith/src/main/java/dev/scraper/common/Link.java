@@ -1,4 +1,4 @@
-package dev.scraper.suggestions.domain;
+package dev.scraper.common;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
