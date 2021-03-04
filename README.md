@@ -56,6 +56,16 @@ Other dependencies of this project are:
 ### Running 
 
 There is docker-compose file for all dependencies and needs to be up and running before running scraper application.  
+For running integration test, current implementation needs manual user registration and tests update with userId.  
+To build scraper application run:  
+
+ `mvn clean install`  
+  
+  and  
+ 
+ `java -jar ./target/*.jar`
+ 
+ in /monolith directory.
 
 Api documentation page is located at:
 `http://localhost:8080/v3/api-docs`

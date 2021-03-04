@@ -12,6 +12,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -41,7 +42,7 @@ public class ScraperApplicationTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .with(jwt().jwt((jwt) -> jwt.claim("sub", "935d75a4-1f27-4de7-9c4b-c63d3f0b7f33"))))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andReturn();
 
         mockMvc.perform(post("/api/links")
@@ -50,6 +51,11 @@ public class ScraperApplicationTest {
                 .accept(MediaType.APPLICATION_JSON)
                 .with(jwt().jwt((jwt) -> jwt.claim("sub", "935d75a4-1f27-4de7-9c4b-c63d3f0b7f33"))))
                 .andExpect(status().is4xxClientError())
+                .andReturn();
+
+        mockMvc.perform(delete("/api/links/all")
+                .with(jwt().jwt((jwt) -> jwt.claim("sub", "935d75a4-1f27-4de7-9c4b-c63d3f0b7f33"))))
+                .andExpect(status().isOk())
                 .andReturn();
     }
 }

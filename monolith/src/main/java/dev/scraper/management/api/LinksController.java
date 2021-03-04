@@ -74,4 +74,11 @@ public class LinksController {
         String userId = (String) getUserId(jwt);
         linksService.deleteLink(id, userId);
     }
+
+    @DeleteMapping(path = "/all")
+    @ResponseStatus(code = HttpStatus.OK)
+    public void deleteLink(@AuthenticationPrincipal Jwt jwt) {
+        String userId = (String) getUserId(jwt);
+        linksService.deleteAllLinks(userId);
+    }
 }

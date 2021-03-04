@@ -16,6 +16,8 @@ public interface MongoLinkRepository extends MongoRepository<Link, String> {
 
     void deleteByIdAndUserId(String id, String userId);
 
+    void deleteAllByUserId(String userId);
+
     Page<Link> findAllByUserId(String userId, Pageable pageable);
 
     List<Link> findAllByUserId(String userId);

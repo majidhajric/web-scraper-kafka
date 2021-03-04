@@ -53,6 +53,10 @@ public class LinksService {
         linkRepository.deleteByIdAndUserId(id, userId);
     }
 
+    public void deleteAllLinks(String userId) {
+        linkRepository.deleteAllByUserId(userId);
+    }
+
     public Page<Link> getAllLinks(String userId, Pageable paging) {
         return linkRepository.findAllByUserId(userId, paging);
     }
@@ -60,4 +64,5 @@ public class LinksService {
     public List<Link> searchLinks(String userId, String tag) {
         return linkRepository.findAllByUserIdAndTagsContaining(userId, tag);
     }
+
 }
