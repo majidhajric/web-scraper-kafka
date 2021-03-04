@@ -64,5 +64,4 @@ public class LinksService {
     public List<Link> searchLinks(String userId, String tag) {
         return linkRepository.findAllByUserIdAndTagsContaining(userId, tag);
     }
-
 }
