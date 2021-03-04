@@ -20,7 +20,7 @@ public class RedisRepository implements SuggestionsCache {
 
     @Override
     public void save(String userId, Link link) {
-        hashOperations.put("USER",userId, link);
+        hashOperations.put("USER", userId, link);
     }
 
     @Override

@@ -14,15 +14,15 @@ import java.util.List;
 public class RedisConfiguration {
 
     @Bean
-    JedisConnectionFactory jedisConnectionFactory() {
-        RedisStandaloneConfiguration redisStandaloneConfiguration = new RedisStandaloneConfiguration("localhost", 6379);
-        return new JedisConnectionFactory(redisStandaloneConfiguration);
-    }
-
-    @Bean
     RedisTemplate<String, List<String>> redisTemplate() {
         RedisTemplate<String, List<String>> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(jedisConnectionFactory());
         return redisTemplate;
+    }
+
+    @Bean
+    JedisConnectionFactory jedisConnectionFactory() {
+        RedisStandaloneConfiguration redisStandaloneConfiguration = new RedisStandaloneConfiguration("localhost", 6379);
+        return new JedisConnectionFactory(redisStandaloneConfiguration);
     }
 }

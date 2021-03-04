@@ -22,7 +22,7 @@ import java.net.URISyntaxException;
 @ControllerAdvice
 public class SuggestionsController {
 
- private final SuggestionService suggestionService;
+    private final SuggestionService suggestionService;
 
     public SuggestionsController(SuggestionService suggestionService) {
         this.suggestionService = suggestionService;

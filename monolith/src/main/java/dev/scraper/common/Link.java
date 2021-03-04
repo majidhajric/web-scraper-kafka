@@ -44,7 +44,7 @@ public class Link implements Serializable {
         } catch (URISyntaxException e) {
             log.debug("Invalid URL", e);
         }
-        Link link = new Link(UUID.randomUUID().toString(), userId, pageURL, hash,tags);
+        Link link = new Link(UUID.randomUUID().toString(), userId, pageURL, hash, tags);
         return link;
     }
 
@@ -85,10 +85,10 @@ public class Link implements Serializable {
         Objects.requireNonNull(m).reset();
         m.update(formattedURI.getBytes());
         byte[] digest = m.digest();
-        BigInteger bigInt = new BigInteger(1,digest);
+        BigInteger bigInt = new BigInteger(1, digest);
         String hashtext = bigInt.toString(16);
-        while(hashtext.length() < 32 ){
-            hashtext = "0"+hashtext;
+        while (hashtext.length() < 32) {
+            hashtext = "0" + hashtext;
         }
         return hashtext;
     }

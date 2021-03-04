@@ -1,7 +1,7 @@
 package dev.scraper.management.api;
 
-import dev.scraper.management.domain.LinksService;
 import dev.scraper.common.Link;
+import dev.scraper.management.domain.LinksService;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -32,30 +32,30 @@ public class LinksController {
         this.linksService = linksService;
     }
 
-    private String getUserId(Jwt jwt) {
-        return (String) jwt.getClaims().get("sub");
-    }
-
     @PostMapping
     @ResponseStatus(code = HttpStatus.CREATED)
     public Link createLink(@RequestBody Link link, @AuthenticationPrincipal Jwt jwt) {
-        String userId = (String) getUserId(jwt);
+        String userId = getUserId(jwt);
         return linksService.createLink(userId, link);
+    }
+
+    private String getUserId(Jwt jwt) {
+        return (String) jwt.getClaims().get("sub");
     }
 
     @PutMapping(path = "/{id}")
     @ResponseStatus(code = HttpStatus.OK)
     public Link updateLink(@PathVariable String id, @RequestBody Link link, @AuthenticationPrincipal Jwt jwt) {
-        String userId = (String) getUserId(jwt);
-        return linksService.updateLink(id,userId, link);
+        String userId = getUserId(jwt);
+        return linksService.updateLink(id, userId, link);
     }
 
     @GetMapping(path = "/all")
     @ResponseStatus(code = HttpStatus.OK)
     public List<Link> getAllLinks(@RequestParam(required = false, defaultValue = "0") Integer page,
-                                  @RequestParam( required = false, defaultValue = "5") Integer size,
+                                  @RequestParam(required = false, defaultValue = "5") Integer size,
                                   @AuthenticationPrincipal Jwt jwt) {
-        String userId = (String) getUserId(jwt);
+        String userId = getUserId(jwt);
         Pageable paging = PageRequest.of(page, size);
         return linksService.getAllLinks(userId, paging).getContent();
     }
@@ -64,21 +64,21 @@ public class LinksController {
     @ResponseStatus(code = HttpStatus.OK)
     public List<Link> getAllLinks(@RequestParam String tag,
                                   @AuthenticationPrincipal Jwt jwt) {
-        String userId = (String) getUserId(jwt);
+        String userId = getUserId(jwt);
         return linksService.searchLinks(userId, tag);
     }
 
     @DeleteMapping(path = "/{id}")
     @ResponseStatus(code = HttpStatus.OK)
     public void deleteLink(@PathVariable String id, @AuthenticationPrincipal Jwt jwt) {
-        String userId = (String) getUserId(jwt);
+        String userId = getUserId(jwt);
         linksService.deleteLink(id, userId);
     }
 
     @DeleteMapping(path = "/all")
     @ResponseStatus(code = HttpStatus.OK)
     public void deleteLink(@AuthenticationPrincipal Jwt jwt) {
-        String userId = (String) getUserId(jwt);
+        String userId = getUserId(jwt);
         linksService.deleteAllLinks(userId);
     }
 }

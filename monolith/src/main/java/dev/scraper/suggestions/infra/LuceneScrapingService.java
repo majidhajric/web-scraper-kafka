@@ -29,6 +29,17 @@ import java.util.stream.Collectors;
 @Service
 public class LuceneScrapingService implements ScrapingService {
 
+    @Override
+    public List<String> extractKeywords(String pageURL)
+            throws URISyntaxException, IOException, InterruptedException {
+        Document document = Jsoup.connect(pageURL).get();
+        String bodyText = document.getElementsByTag("article").text();
+
+        List<String> keywords = analyzeContent(bodyText);
+
+        return keywords;
+    }
+
     private List<String> analyzeContent(String content) {
         Map<String, Integer> keywords = new HashMap<>();
 
@@ -59,32 +70,21 @@ public class LuceneScrapingService implements ScrapingService {
             while (tokenStream.incrementToken()) {
                 String term = token.toString();
 
-                keywords.compute(term, (k, v) -> (v == null) ? 1 : v+1);
+                keywords.compute(term, (k, v) -> (v == null) ? 1 : v + 1);
             }
         } catch (Exception e) {
             log.error("Extraction Exception:", e);
         }
 
         return keywords.entrySet().stream()
-                        .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
-                        .map(Map.Entry::getKey)
-                        .limit(10)
-                        .collect(Collectors.toCollection(LinkedList::new));
-    }
-
-    @Override
-    public List<String> extractKeywords(String pageURL)
-            throws URISyntaxException, IOException, InterruptedException {
-        Document document= Jsoup.connect(pageURL).get();
-        String bodyText = document.getElementsByTag("article").text();
-
-        List<String> keywords = analyzeContent(bodyText);
-
-        return keywords;
+                .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
+                .map(Map.Entry::getKey)
+                .limit(10)
+                .collect(Collectors.toCollection(LinkedList::new));
     }
 
     public List<String> extractKeywordsFromHtml(String html) {
-        Document document= Jsoup.parse(html);
+        Document document = Jsoup.parse(html);
         String bodyText = document.getElementsByTag("body").text();
 
         List<String> keywords = analyzeContent(bodyText);

@@ -1,7 +1,7 @@
 package dev.scraper.management.domain;
 
-import dev.scraper.management.infra.MongoLinkRepository;
 import dev.scraper.common.Link;
+import dev.scraper.management.infra.MongoLinkRepository;
 import dev.scraper.suggestions.domain.SuggestionsCache;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -28,7 +28,7 @@ public class LinksService {
             throw new RuntimeException("Invalid Link");
         }
         Optional<Link> optionalLink = linkRepository.findByUserIdAndPageHash(userId, link.getPageHash());
-        if (optionalLink.isPresent()){
+        if (optionalLink.isPresent()) {
             throw new RuntimeException("Link already exists");
         }
         link = linkRepository.save(link);
@@ -36,7 +36,7 @@ public class LinksService {
     }
 
     public Link updateLink(String id, String userId, Link link) {
-        if (!id.equals(link.getId())){
+        if (!id.equals(link.getId())) {
             throw new RuntimeException("Invalid Link");
         }
 

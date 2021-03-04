@@ -27,7 +27,7 @@ public class SuggestionService {
     public Link createSuggestion(String userId, String pageURL) throws InterruptedException, IOException, URISyntaxException {
         List<String> keywords = scrapingService.extractKeywords(pageURL);
         Link link = Link.create(userId, pageURL, keywords);
-        suggestionsCache.save(userId,link);
+        suggestionsCache.save(userId, link);
         return link;
     }
 }
