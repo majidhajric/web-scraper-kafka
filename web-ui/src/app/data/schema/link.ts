@@ -1,4 +1,12 @@
 export class Link {
+
   id: string;
-  name: string;
+
+  userId: string;
+
+  pageURL: string;
+
+  pageHash: string;
+
+  tags: string[];
 }

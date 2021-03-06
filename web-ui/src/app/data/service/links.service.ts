@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpParams} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {Link} from '../schema/link';
 import {environment} from '../../../environments/environment';
@@ -9,14 +9,22 @@ import {environment} from '../../../environments/environment';
 })
 export class LinksService {
 
+  readonly API_BASE = 'links'
+  readonly API = environment.apiServer + '/' + this.API_BASE;
+
   constructor(private httpClient: HttpClient) {
   }
 
-  public getAllItems(): Observable<Link[]> {
-    return this.httpClient.get<Link[]>(environment.apiServer);
+  public getLinksPage(page = 0, size = 5): Observable<Link[]> {
+    return this.httpClient.get<Link[]>(this.API + '/all',
+      {
+      params: new HttpParams()
+        .set('page', page.toString())
+        .set('size', size.toString())
+    });
   }
 
   public getItem(id: string): Observable<Link> {
-    return this.httpClient.get<Link>(environment.apiServer + id);
+    return this.httpClient.get<Link>(this.API + '/' + id);
   }
 }

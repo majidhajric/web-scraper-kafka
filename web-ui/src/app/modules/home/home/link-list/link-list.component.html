@@ -1,0 +1,19 @@
+
+
+<div class="spinner-container" *ngIf="dataSource.loading$ | async">
+  <mat-spinner></mat-spinner>
+</div>
+
+<mat-table class="m-3 mat-elevation-z8" [dataSource]="dataSource">
+
+  <ng-container matColumnDef="Link">
+    <div *matHeaderCellDef>Link</div>
+    <app-link-view *matCellDef="let link" [link]="link" ></app-link-view>
+  </ng-container>
+
+  <mat-row class="my-2" mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+
+
+  <mat-paginator [length]="totalLinks" [pageSize]="5"
+                 [pageSizeOptions]="[3, 5, 10]"></mat-paginator>
+</mat-table>
