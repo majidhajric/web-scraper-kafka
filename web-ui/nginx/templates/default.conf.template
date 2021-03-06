@@ -1,0 +1,21 @@
+map $sent_http_content_type $expires {
+    default                    off;
+    text/html                  epoch; #means no cache, as it is not a static page
+    text/css                   max;
+    application/javascript     max;
+    application/woff2          max;
+    ~image/                    30d; #it is only the logo, so maybe I could change it once a month now
+}
+
+server {
+    listen       ${PORT};
+    server_name  _;
+	  expires $expires;
+
+    root /usr/share/nginx/html;
+    index index.html;
+
+    location / {
+        try_files $uri /index.html;
+    }
+}

@@ -1,5 +1,8 @@
 # Redis Config
 spring:
+  application:
+    name: scraper
+
   cache:
     type: redis
 

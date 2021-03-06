@@ -1,0 +1,10 @@
+<div *ngIf="!(userInfo | async)">
+  <button mat-button (click)="signIn()">
+    Sign In
+  </button>
+</div>
+<div *ngIf="(userInfo | async)">
+  <button mat-button (click)="signOut()">
+    Sign Out
+  </button>
+</div>

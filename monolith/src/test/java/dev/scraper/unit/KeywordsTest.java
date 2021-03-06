@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-import java.util.List;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -17,7 +17,7 @@ public class KeywordsTest {
     @Test
     public void keywords_extraction_test() {
         String html = IOUtils.toString(this.getClass().getResourceAsStream("sport.html"), StandardCharsets.UTF_8);
-        List<String> keywords = scrapingService.extractKeywordsFromHtml(html);
+        Set<String> keywords = scrapingService.extractKeywordsFromHtml(html);
         assertThat(keywords.containsAll(Arrays.asList("Real Madrid", "Barcelona", "people")));
     }
 }

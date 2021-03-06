@@ -17,8 +17,8 @@ public class LinkTest {
         String uriTwo = "www.example.com?one=1&two=2";
         String userId = "test";
 
-        Link linkOne = Link.create(userId,uriOne, Collections.emptyList());
-        Link linkTwo = Link.create(userId,uriTwo, Collections.emptyList());
+        Link linkOne = Link.create(userId,uriOne, Collections.emptySet());
+        Link linkTwo = Link.create(userId,uriTwo, Collections.emptySet());
 
         assertEquals(linkOne, linkTwo);
     }

@@ -12,8 +12,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -35,9 +35,9 @@ public class Link implements Serializable {
 
     private String pageHash;
 
-    private List<String> tags;
+    private Set<String> tags;
 
-    public static Link create(String userId, String pageURL, List<String> tags) {
+    public static Link create(String userId, String pageURL, Set<String> tags) {
         String hash = null;
         try {
             hash = calculateMD5(pageURL);

@@ -3,8 +3,10 @@ package dev.scraper.management.domain;
 import dev.scraper.common.Link;
 import dev.scraper.management.infra.MongoLinkRepository;
 import dev.scraper.suggestions.domain.SuggestionsCache;
+import org.apache.kafka.streams.StreamsBuilder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,12 +14,19 @@ import java.util.Optional;
 
 @Service
 public class LinksService {
+    private static final String TOPIC = "links-topic";
+
+    private final KafkaTemplate<String, Link> kafkaTemplate;
 
     private final SuggestionsCache suggestionsCache;
 
     private final MongoLinkRepository linkRepository;
 
-    public LinksService(SuggestionsCache suggestionsCache, MongoLinkRepository linkRepository) {
+    StreamsBuilder builder = new StreamsBuilder();
+
+    public LinksService(KafkaTemplate<String, Link> kafkaTemplate,
+                        SuggestionsCache suggestionsCache, MongoLinkRepository linkRepository) {
+        this.kafkaTemplate = kafkaTemplate;
         this.suggestionsCache = suggestionsCache;
         this.linkRepository = linkRepository;
     }
@@ -32,6 +41,9 @@ public class LinksService {
             throw new RuntimeException("Link already exists");
         }
         link = linkRepository.save(link);
+
+        kafkaTemplate.send(TOPIC, link);
+
         return link;
     }
 

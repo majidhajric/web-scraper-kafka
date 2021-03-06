@@ -30,11 +30,13 @@ public class ScraperApplicationTest {
 
     private final String userId = UUID.randomUUID().toString();
 
+    private final String testPage = "https://www.bbc.com/sport/football/56301568";
+
     @WithMockUser
     @Test
     public void duplicate_link_creat_test() throws Exception {
         String content = mockMvc.perform(get("/api/suggestions")
-                .param("pageURL", "https://www.bbc.co.uk/news/av/world-europe-50849839")
+                .param("pageURL", testPage)
                 .with(jwt().jwt((jwt) -> jwt.claim("sub", userId))))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.tags").exists())
                 .andReturn()

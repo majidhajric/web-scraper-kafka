@@ -20,9 +20,9 @@ import java.io.StringReader;
 import java.net.URISyntaxException;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -30,17 +30,17 @@ import java.util.stream.Collectors;
 public class LuceneScrapingService implements ScrapingService {
 
     @Override
-    public List<String> extractKeywords(String pageURL)
+    public Set<String> extractKeywords(String pageURL)
             throws URISyntaxException, IOException, InterruptedException {
         Document document = Jsoup.connect(pageURL).get();
         String bodyText = document.getElementsByTag("article").text();
 
-        List<String> keywords = analyzeContent(bodyText);
+        Set<String> keywords = analyzeContent(bodyText);
 
         return keywords;
     }
 
-    private List<String> analyzeContent(String content) {
+    private Set<String> analyzeContent(String content) {
         Map<String, Integer> keywords = new HashMap<>();
 
         // hack to keep dashed words (e.g. "non-specific" rather than "non" and "specific")
@@ -80,14 +80,14 @@ public class LuceneScrapingService implements ScrapingService {
                 .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
                 .map(Map.Entry::getKey)
                 .limit(10)
-                .collect(Collectors.toCollection(LinkedList::new));
+                .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
-    public List<String> extractKeywordsFromHtml(String html) {
+    public Set<String> extractKeywordsFromHtml(String html) {
         Document document = Jsoup.parse(html);
         String bodyText = document.getElementsByTag("body").text();
 
-        List<String> keywords = analyzeContent(bodyText);
+        Set<String> keywords = analyzeContent(bodyText);
 
         return keywords;
     }

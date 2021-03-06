@@ -1,0 +1,45 @@
+@import 'node_modules/bootstrap/scss/bootstrap-grid';
+@import 'node_modules/@angular/material/theming';
+
+@include mat-core();
+
+$app-light-primary: mat-palette($mat-blue-gray, 700, 300, 900);
+$app-light-accent: mat-palette($mat-teal, 400);
+$app-light-warn: mat-palette($mat-deep-orange, 600);
+
+$app-light-theme: mat-light-theme(
+    $app-light-primary,
+    $app-light-accent,
+    $app-light-warn
+);
+
+$app-dark-primary: mat-palette($mat-blue-gray, 700, 300, 900);
+$app-dark-accent: mat-palette($mat-teal, 400);
+$app-dark-warn: mat-palette($mat-deep-orange, 600);
+
+$app-dark-theme: mat-dark-theme(
+    $app-dark-primary,
+    $app-dark-accent,
+    $app-dark-warn
+);
+
+
+@include angular-material-theme($app-light-theme);
+
+.color-scheme-dark {
+  @include angular-material-theme($app-dark-theme);
+}
+
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+* {
+  &:active,
+  :focus {
+    outline: none !important;  // 1
+  }
+}
