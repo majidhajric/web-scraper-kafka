@@ -10,11 +10,13 @@ import {environment} from '../../../environments/environment';
 })
 export class SuggestionsService {
 
+  readonly API_BASE = 'suggestions'
+  readonly API = environment.apiServer + '/' + this.API_BASE;
+
   constructor(private httpClient: HttpClient) { }
 
   public getSeggestions(pageURL: string): Observable<Link> {
-    const params: HttpParams = new HttpParams();
-    params.set('pageURL', pageURL);
-    return this.httpClient.get<Link>(environment.apiServer + '/suggestions', {params});
+    let params = new HttpParams().set('pageURL', pageURL);
+    return this.httpClient.get<Link>(this.API, {params: params});
   }
 }

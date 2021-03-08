@@ -3,6 +3,7 @@ package dev.scraper.common;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.mongodb.core.mapping.MongoId;
 
@@ -19,6 +20,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Slf4j
+@NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @EqualsAndHashCode(of = "pageHash")

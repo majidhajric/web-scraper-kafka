@@ -9,7 +9,7 @@ import {environment} from '../../../environments/environment';
 })
 export class LinksService {
 
-  readonly API_BASE = 'links'
+  readonly API_BASE = 'links';
   readonly API = environment.apiServer + '/' + this.API_BASE;
 
   constructor(private httpClient: HttpClient) {
@@ -26,5 +26,10 @@ export class LinksService {
 
   public getItem(id: string): Observable<Link> {
     return this.httpClient.get<Link>(this.API + '/' + id);
+  }
+
+  public saveLink(link: Link) {
+    return this.httpClient.post<any>(this.API, link)
+  .subscribe();
   }
 }

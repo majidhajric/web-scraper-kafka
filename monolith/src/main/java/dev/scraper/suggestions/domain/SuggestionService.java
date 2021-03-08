@@ -1,12 +1,14 @@
 package dev.scraper.suggestions.domain;
 
 import dev.scraper.common.Link;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Set;
 
+@Slf4j
 @Service
 public class SuggestionService {
 

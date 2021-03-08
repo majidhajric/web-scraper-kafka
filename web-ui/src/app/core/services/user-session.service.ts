@@ -53,12 +53,12 @@ export class UserSessionService implements OnDestroy {
         this.oauthService.loadUserProfile()
           .then(userInfo => this.userInfoSubject.next(userInfo));
         break;
+      case 'user_profile_loaded':
+         this.router.navigate(['/home']);
+         break;
       case 'session_terminated':
       case 'logout':
         this.userInfoSubject.next(null);
-        break;
-      case 'user_profile_loaded':
-        this.router.navigate(['/home']);
         break;
       default:
         break;

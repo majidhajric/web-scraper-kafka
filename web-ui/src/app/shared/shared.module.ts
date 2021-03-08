@@ -5,22 +5,25 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {RouterModule} from '@angular/router';
 
 import {MaterialModule} from './material.module';
+import { ChipsMultiSelectComponent } from './components/chips-multi-select/chips-multi-select.component';
 
 @NgModule({
-  declarations: [],
+  declarations: [ChipsMultiSelectComponent],
   imports: [
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
     RouterModule,
-  ],
-  exports: [
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    RouterModule,
     MaterialModule,
-  ]
+  ],
+    exports: [
+        CommonModule,
+        FormsModule,
+        ReactiveFormsModule,
+        RouterModule,
+        MaterialModule,
+        ChipsMultiSelectComponent,
+    ]
 })
 export class SharedModule {
 }
