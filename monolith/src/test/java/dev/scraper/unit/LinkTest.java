@@ -15,10 +15,11 @@ public class LinkTest {
     public void whenTwoSameURIs_thenEqualsTagsSourcesExpected() {
         String uriOne = "http://www.example.com?two=2&one=1";
         String uriTwo = "www.example.com?one=1&two=2";
+        String title = "Example";
         String userId = "test";
 
-        Link linkOne = Link.create(userId,uriOne, Collections.emptySet());
-        Link linkTwo = Link.create(userId,uriTwo, Collections.emptySet());
+        Link linkOne = Link.create(userId,uriOne, title, Collections.emptySet());
+        Link linkTwo = Link.create(userId,uriTwo, title, Collections.emptySet());
 
         assertEquals(linkOne, linkTwo);
     }

@@ -2,6 +2,7 @@ package dev.scraper.management.api;
 
 import dev.scraper.common.Link;
 import dev.scraper.management.domain.LinksService;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -18,8 +19,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 
 @RestController
 @RequestMapping(path = "/api/links")
@@ -52,20 +51,23 @@ public class LinksController {
 
     @GetMapping(path = "/all")
     @ResponseStatus(code = HttpStatus.OK)
-    public List<Link> getAllLinks(@RequestParam(required = false, defaultValue = "0") Integer page,
+    public Page<Link> getAllLinks(@RequestParam(required = false, defaultValue = "0") Integer page,
                                   @RequestParam(required = false, defaultValue = "5") Integer size,
                                   @AuthenticationPrincipal Jwt jwt) {
         String userId = getUserId(jwt);
-        Pageable paging = PageRequest.of(page, size);
-        return linksService.getAllLinks(userId, paging).getContent();
+        Pageable pageable = PageRequest.of(page, size);
+        return linksService.getAllLinks(userId, pageable);
     }
 
     @GetMapping(path = "/search")
     @ResponseStatus(code = HttpStatus.OK)
-    public List<Link> getAllLinks(@RequestParam String tag,
+    public Page<Link> getAllLinks(@RequestParam String tag,
+                                  @RequestParam(required = false, defaultValue = "0") Integer page,
+                                  @RequestParam(required = false, defaultValue = "5") Integer size,
                                   @AuthenticationPrincipal Jwt jwt) {
         String userId = getUserId(jwt);
-        return linksService.searchLinks(userId, tag);
+        Pageable pageable = PageRequest.of(page, size);
+        return linksService.searchLinks(userId, tag, pageable);
     }
 
     @DeleteMapping(path = "/{id}")

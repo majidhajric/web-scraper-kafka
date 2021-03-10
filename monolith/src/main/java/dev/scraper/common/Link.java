@@ -37,16 +37,18 @@ public class Link implements Serializable {
 
     private String pageHash;
 
+    private String title;
+
     private Set<String> tags;
 
-    public static Link create(String userId, String pageURL, Set<String> tags) {
+    public static Link create(String userId, String pageURL, String title, Set<String> tags) {
         String hash = null;
         try {
             hash = calculateMD5(pageURL);
         } catch (URISyntaxException e) {
             log.debug("Invalid URL", e);
         }
-        Link link = new Link(UUID.randomUUID().toString(), userId, pageURL, hash, tags);
+        Link link = new Link(UUID.randomUUID().toString(), userId, pageURL, hash, title, tags);
         return link;
     }
 

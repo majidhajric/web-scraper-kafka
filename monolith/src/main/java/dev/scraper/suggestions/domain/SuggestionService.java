@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.Set;
 
 @Slf4j
 @Service
@@ -22,8 +21,8 @@ public class SuggestionService {
     }
 
     public Link createSuggestion(String userId, String pageURL) throws InterruptedException, IOException, URISyntaxException {
-        Set<String> keywords = scrapingService.extractKeywords(pageURL);
-        Link link = Link.create(userId, pageURL, keywords);
+        PageDetails pageDetails = scrapingService.extractKeywords(pageURL);
+        Link link = Link.create(userId, pageURL, pageDetails.getTitle(), pageDetails.getKeywords());
         suggestionsCache.save(userId, link);
         return link;
     }

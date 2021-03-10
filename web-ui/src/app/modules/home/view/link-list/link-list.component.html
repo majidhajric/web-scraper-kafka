@@ -1,10 +1,19 @@
+<mat-toolbar class="mt-3">
+  <mat-form-field class="m-0 p-3 d-flex flex-grow-1 flex-column">
+    <mat-label>Search Links</mat-label>
+    <input matInput placeholder="" [(ngModel)]="filter">
+  </mat-form-field>
+  <div class="p-3">
+    <a mat-raised-button color="primary" routerLink="new">Create Link...</a>
+  </div>
+</mat-toolbar>
 
 
 <div class="spinner-container" *ngIf="dataSource.loading$ | async">
   <mat-spinner></mat-spinner>
 </div>
 
-<mat-table class="m-3 mat-elevation-z8" [dataSource]="dataSource">
+<mat-table class="m-3 mt-0 d-flex flex-column flex-grow-1" [dataSource]="dataSource">
 
   <ng-container matColumnDef="Link">
     <div *matHeaderCellDef>Link</div>
@@ -14,6 +23,5 @@
   <mat-row class="my-2" mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
 
 
-  <mat-paginator [length]="totalLinks" [pageSize]="5"
-                 [pageSizeOptions]="[3, 5, 10]"></mat-paginator>
 </mat-table>
+<mat-paginator [length]="page?.totalElements"  [pageSizeOptions]="[3, 5, 10]" [pageSize]="10"></mat-paginator>

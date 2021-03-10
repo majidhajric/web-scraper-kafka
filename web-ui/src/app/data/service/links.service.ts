@@ -3,6 +3,7 @@ import {HttpClient, HttpParams} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {Link} from '../schema/link';
 import {environment} from '../../../environments/environment';
+import {Page} from '../schema/page';
 
 @Injectable({
   providedIn: 'root'
@@ -15,8 +16,8 @@ export class LinksService {
   constructor(private httpClient: HttpClient) {
   }
 
-  public getLinksPage(page = 0, size = 5): Observable<Link[]> {
-    return this.httpClient.get<Link[]>(this.API + '/all',
+  public getLinksPage(page = 0, size = 5): Observable<Page<Link>> {
+    return this.httpClient.get<Page<Link>>(this.API + '/all',
       {
       params: new HttpParams()
         .set('page', page.toString())
@@ -30,6 +31,6 @@ export class LinksService {
 
   public saveLink(link: Link) {
     return this.httpClient.post<any>(this.API, link)
-  .subscribe();
+   .subscribe();
   }
 }

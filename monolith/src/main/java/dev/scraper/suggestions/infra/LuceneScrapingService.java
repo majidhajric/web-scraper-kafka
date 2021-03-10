@@ -1,5 +1,6 @@
 package dev.scraper.suggestions.infra;
 
+import dev.scraper.suggestions.domain.PageDetails;
 import dev.scraper.suggestions.domain.ScrapingService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.lucene.analysis.LowerCaseFilter;
@@ -17,7 +18,6 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.io.StringReader;
-import java.net.URISyntaxException;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -30,14 +30,14 @@ import java.util.stream.Collectors;
 public class LuceneScrapingService implements ScrapingService {
 
     @Override
-    public Set<String> extractKeywords(String pageURL)
-            throws URISyntaxException, IOException, InterruptedException {
+    public PageDetails extractKeywords(String pageURL) throws IOException {
         Document document = Jsoup.connect(pageURL).get();
-        String bodyText = document.getElementsByTag("article").text();
+        return getPageKeywords(document);
+    }
 
-        Set<String> keywords = analyzeContent(bodyText);
-
-        return keywords;
+    public PageDetails extractKeywordsFromHtml(String html) {
+        Document document = Jsoup.parse(html);
+        return getPageKeywords(document);
     }
 
     private Set<String> analyzeContent(String content) {
@@ -83,12 +83,10 @@ public class LuceneScrapingService implements ScrapingService {
                 .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
-    public Set<String> extractKeywordsFromHtml(String html) {
-        Document document = Jsoup.parse(html);
-        String bodyText = document.getElementsByTag("body").text();
-
+    private PageDetails getPageKeywords(Document document) {
+        String title = document.getElementsByTag("title").text();
+        String bodyText = document.getElementsByTag("article").text();
         Set<String> keywords = analyzeContent(bodyText);
-
-        return keywords;
+        return new PageDetails(title, keywords);
     }
 }

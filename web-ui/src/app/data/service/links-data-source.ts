@@ -3,12 +3,15 @@ import {Link} from '../schema/link';
 import {BehaviorSubject, Observable, of} from 'rxjs';
 import {LinksService} from './links.service';
 import {catchError, finalize} from 'rxjs/operators';
+import {Page} from '../schema/page';
 
 export class LinksDataSource implements DataSource<Link>{
 
   private linkSubject = new BehaviorSubject<Link[]>([]);
   private loadingSubject = new BehaviorSubject<boolean>(false);
   public loading$ = this.loadingSubject.asObservable();
+  private countSubject = new BehaviorSubject<number>(0);
+  public counter$ = this.countSubject.asObservable();
 
   constructor(private linksService: LinksService) {
   }
@@ -20,6 +23,7 @@ export class LinksDataSource implements DataSource<Link>{
   disconnect(collectionViewer: CollectionViewer): void {
     this.linkSubject.complete();
     this.loadingSubject.complete();
+    this.countSubject.complete();
   }
 
   loadLinks(page: number, size: number) {
@@ -27,9 +31,12 @@ export class LinksDataSource implements DataSource<Link>{
 
     this.linksService.getLinksPage(page, size)
       .pipe(
-        catchError(() => of([])),
+        catchError(() => of({} as Page<Link>)),
         finalize(() => this.loadingSubject.next(false))
       )
-      .subscribe(links => this.linkSubject.next(links));
+      .subscribe((result: Page<Link>) => {
+        this.linkSubject.next(result.content);
+        this.countSubject.next(result.totalElements);
+      });
   }
 }

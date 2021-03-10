@@ -7,7 +7,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -58,11 +57,12 @@ public class LinksService {
         linkRepository.deleteAllByUserId(userId);
     }
 
-    public Page<Link> getAllLinks(String userId, Pageable paging) {
-        return linkRepository.findAllByUserId(userId, paging);
+    public Page<Link> getAllLinks(String userId, Pageable pageable) {
+        return linkRepository.findAllByUserId(userId, pageable);
     }
 
-    public List<Link> searchLinks(String userId, String tag) {
-        return linkRepository.findAllByUserIdAndTagsContaining(userId, tag);
+    public Page<Link> searchLinks(String userId, String tag, Pageable pageable) {
+        return linkRepository.findAllByUserIdAndTagsContaining(userId, tag, pageable);
     }
+
 }

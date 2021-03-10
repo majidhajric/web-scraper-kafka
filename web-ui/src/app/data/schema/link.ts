@@ -1,4 +1,4 @@
-export class Link {
+export interface Link {
 
   id: string;
 
@@ -7,6 +7,8 @@ export class Link {
   pageURL: string;
 
   pageHash: string;
+
+  title: string;
 
   tags: string[];
 }

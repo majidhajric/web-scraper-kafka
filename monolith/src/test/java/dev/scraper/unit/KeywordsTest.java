@@ -1,5 +1,6 @@
 package dev.scraper.unit;
 
+import dev.scraper.suggestions.domain.PageDetails;
 import dev.scraper.suggestions.infra.LuceneScrapingService;
 import io.micrometer.core.instrument.util.IOUtils;
 import org.junit.jupiter.api.Test;
@@ -17,7 +18,8 @@ public class KeywordsTest {
     @Test
     public void keywords_extraction_test() {
         String html = IOUtils.toString(this.getClass().getResourceAsStream("sport.html"), StandardCharsets.UTF_8);
-        Set<String> keywords = scrapingService.extractKeywordsFromHtml(html);
+        PageDetails pageDetails = scrapingService.extractKeywordsFromHtml(html);
+        Set<String> keywords = pageDetails.getKeywords();
         assertThat(keywords.containsAll(Arrays.asList("Real Madrid", "Barcelona", "people")));
     }
 }

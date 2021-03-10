@@ -1,5 +1,5 @@
 <div class="d-flex">
-  <mat-form-field class="p-3 d-flex flex-column flex-grow-1">
+  <mat-form-field class="p-5 d-flex flex-column flex-grow-1">
     <mat-label>Page URL</mat-label>
     <input matInput type="url"  placeholder="http://example.com/page.html" [(ngModel)]="url">
     <button mat-button *ngIf="url" matSuffix mat-icon-button aria-label="Clear" (click)="url=''">
@@ -7,15 +7,19 @@
     </button>
   </mat-form-field>
 
-  <div class="p-3 d-flex flex-column">
+  <div class="p-5 d-flex flex-column">
     <button mat-raised-button color="accent" (click)="analyse()">Analyse</button>
   </div>
 </div>
 
-<div class="d-flex">
+<div class="spinner-container p-5 d-flex justify-content-center" *ngIf="loading$ | async">
+  <mat-spinner></mat-spinner>
+</div>
+
+<div class="d-flex p-5">
   <app-chips-multi-select [options]="suggestions" (selectedItemsEvent)="tagsSelected($event)"></app-chips-multi-select>
 </div>
-<div class="d-flex p-3 justify-content-center">
+<div class="d-flex p-3 px-5 justify-content-end">
   <button *ngIf="link?.tags.length" mat-raised-button color="accent" (click)="save()">Save</button>
 </div>
 
