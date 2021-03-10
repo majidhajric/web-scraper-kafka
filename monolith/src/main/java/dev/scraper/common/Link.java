@@ -13,6 +13,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
@@ -31,6 +33,8 @@ public class Link implements Serializable {
     @MongoId
     private String id;
 
+    private LocalDateTime timeCreated;
+
     private String userId;
 
     private String pageURL;
@@ -48,7 +52,14 @@ public class Link implements Serializable {
         } catch (URISyntaxException e) {
             log.debug("Invalid URL", e);
         }
-        Link link = new Link(UUID.randomUUID().toString(), userId, pageURL, hash, title, tags);
+        Link link = new Link();
+        link.id = UUID.randomUUID().toString();
+        link.timeCreated = LocalDateTime.now();
+        link.userId = userId;
+        link.pageURL = pageURL;
+        link.pageHash = hash;
+        link.title = title;
+        link.tags = new HashSet<>(tags);
         return link;
     }
 

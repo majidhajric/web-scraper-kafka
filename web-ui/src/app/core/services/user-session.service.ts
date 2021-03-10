@@ -56,7 +56,6 @@ export class UserSessionService implements OnDestroy {
       case 'user_profile_loaded':
          this.router.navigate(['/home']);
          break;
-      case 'session_terminated':
       case 'logout':
         this.userInfoSubject.next(null);
         break;

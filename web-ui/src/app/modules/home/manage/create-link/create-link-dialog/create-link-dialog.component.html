@@ -1,0 +1,28 @@
+<div class="d-flex flex-column flex-grow-1">
+<h2 mat-dialog-title>Create new Link</h2>
+
+<mat-dialog-content class="d-flex flex-column flex-grow-1">
+
+    <mat-form-field appearance="fill">
+      <mat-label>Page URL</mat-label>
+      <input matInput type="url"  placeholder="http://example.com/page.html" [(ngModel)]="url">
+      <button mat-icon-button matSuffix aria-label="Scrap" (click)="analyse()">
+        <mat-icon>spellcheck</mat-icon>
+      </button>
+    </mat-form-field>
+
+
+
+  <div class="spinner-container p-5 d-flex justify-content-center" *ngIf="loading$ | async">
+    <mat-spinner></mat-spinner>
+  </div>
+
+  <app-chips-multi-select [options]="suggestions" (selectedItemsEvent)="tagsSelected($event)"></app-chips-multi-select>
+
+</mat-dialog-content>
+
+<mat-dialog-actions class="justify-content-end">
+  <button class="mat-raised-button mx-3"(click)="close()">Close</button>
+  <button class="mat-raised-button mx-3 mat-primary"(click)="save()" [disabled]="!link?.tags.length">Save</button>
+</mat-dialog-actions>
+</div>

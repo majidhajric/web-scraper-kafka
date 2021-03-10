@@ -49,7 +49,7 @@ export class LinkListComponent implements OnInit, AfterViewInit {
     console.log('Row clicked: ', row);
   }
 
-  private loadLinks() {
+  loadLinks() {
     this.dataSource.loadLinks(this.paginator.pageIndex, this.paginator.pageSize);
   }
 }

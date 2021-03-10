@@ -1,19 +1,19 @@
-import {AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {SuggestionsService} from '../../../../data/service/suggestions.service';
+import {AfterViewInit, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {BehaviorSubject, of} from 'rxjs';
-import {Link} from '../../../../data/schema/link';
-import {ChipsMultiSelectComponent} from '../../../../shared/components/chips-multi-select/chips-multi-select.component';
-import {LinksService} from '../../../../data/service/links.service';
-import {catchError, finalize} from 'rxjs/operators';
-import {Page} from '../../../../data/schema/page';
+import {ChipsMultiSelectComponent} from '../../../../../shared/components/chips-multi-select/chips-multi-select.component';
+import {Link} from '../../../../../data/schema/link';
+import {SuggestionsService} from '../../../../../data/service/suggestions.service';
+import {LinksService} from '../../../../../data/service/links.service';
 import {Router} from '@angular/router';
+import {catchError, finalize} from 'rxjs/operators';
+import {MatDialogRef} from '@angular/material/dialog';
 
 @Component({
-  selector: 'app-create-link',
-  templateUrl: './create-link.component.html',
-  styleUrls: ['./create-link.component.scss']
+  selector: 'app-create-link-dialog',
+  templateUrl: './create-link-dialog.component.html',
+  styleUrls: ['./create-link-dialog.component.scss']
 })
-export class CreateLinkComponent implements OnInit, AfterViewInit, OnDestroy  {
+export class CreateLinkDialogComponent implements OnInit, AfterViewInit, OnDestroy  {
 
   private loadingSubject = new BehaviorSubject<boolean>(false);
   public loading$ = this.loadingSubject.asObservable();
@@ -24,11 +24,13 @@ export class CreateLinkComponent implements OnInit, AfterViewInit, OnDestroy  {
   suggestions: string[];
   link: Link;
 
-  constructor(private suggestionsService: SuggestionsService, private linksService: LinksService, private router: Router) { }
+  constructor(private dialogRef: MatDialogRef<CreateLinkDialogComponent>,
+              private suggestionsService: SuggestionsService,
+              private linksService: LinksService) { }
 
   ngAfterViewInit(): void {
     this.suggestionsSelect.resetValues();
-    }
+  }
 
   ngOnInit(): void {
   }
@@ -55,12 +57,18 @@ export class CreateLinkComponent implements OnInit, AfterViewInit, OnDestroy  {
     }
   }
 
-  save() {
-    this.linksService.saveLink(this.link);
-    this.router.navigate(['home']);
-  }
 
   ngOnDestroy(): void {
     this.loadingSubject.complete();
+  }
+
+  save() {
+    this.linksService.saveLink(this.link);
+    this.close();
+  }
+
+  close() {
+    this.loadingSubject.complete();
+    this.dialogRef.close();
   }
 }

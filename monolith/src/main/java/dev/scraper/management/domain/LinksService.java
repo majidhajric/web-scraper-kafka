@@ -58,11 +58,11 @@ public class LinksService {
     }
 
     public Page<Link> getAllLinks(String userId, Pageable pageable) {
-        return linkRepository.findAllByUserId(userId, pageable);
+        return linkRepository.findAllByUserIdOrderByTimeCreatedDesc(userId, pageable);
     }
 
     public Page<Link> searchLinks(String userId, String tag, Pageable pageable) {
-        return linkRepository.findAllByUserIdAndTagsContaining(userId, tag, pageable);
+        return linkRepository.findAllByUserIdAndTagsContainingOrderByTimeCreatedDesc(userId, tag, pageable);
     }
 
 }

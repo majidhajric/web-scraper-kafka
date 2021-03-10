@@ -7,19 +7,22 @@ import { LinkListComponent } from './view/link-list/link-list.component';
 import { LinkViewComponent } from './view/link-view/link-view.component';
 import {MatTableModule} from '@angular/material/table';
 import {MaterialModule} from '../../shared/material.module';
-import { CreateLinkComponent } from './edit/create-link/create-link.component';
 import {SharedModule} from '../../shared/shared.module';
+import { CreateLinkDialogComponent } from './manage/create-link/create-link-dialog/create-link-dialog.component';
+import {MatDialogModule} from '@angular/material/dialog';
 
 
 @NgModule({
-  declarations: [HomeComponent, LinkListComponent, LinkViewComponent, CreateLinkComponent],
+  declarations: [HomeComponent, LinkListComponent, LinkViewComponent, CreateLinkDialogComponent],
   imports: [
     CommonModule,
     HomeRoutingModule,
     MatTableModule,
     MaterialModule,
-    SharedModule
-  ]
+    SharedModule,
+    MatDialogModule
+  ],
+  entryComponents: [CreateLinkDialogComponent]
 })
 export class HomeModule {
 }
