@@ -1,3 +1,4 @@
+<p *ngIf="options?.length">{{title}}</p>
 <mat-chip-list selectable multiple>
   <mat-chip #c="matChip" *ngFor="let option of options" [value]="option" (click)="toggleSelection(c)">
     {{option}}

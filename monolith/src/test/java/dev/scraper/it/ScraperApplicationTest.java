@@ -5,6 +5,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.kafka.test.context.EmbeddedKafka;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
@@ -22,6 +25,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @ContextConfiguration
 @WebAppConfiguration
+@DirtiesContext
+@EmbeddedKafka(partitions = 1, brokerProperties = { "listeners=PLAINTEXT://localhost:29092", "port=29092" })
 public class ScraperApplicationTest {
 
     @Autowired
@@ -31,6 +36,7 @@ public class ScraperApplicationTest {
 
     private final String testPage = "https://www.bbc.com/sport/football/56301568";
 
+    @WithMockUser
     @Test
     public void duplicate_link_create_test() throws Exception {
         String content = mockMvc.perform(get("/api/suggestions")

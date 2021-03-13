@@ -32,11 +32,12 @@ services:
     ports:
       - "${POSTGRES_PORT}:${POSTGRES_PORT}"
     volumes:
-      - "./localhost-env/postgresql/data:/var/lib/postgresql/data"
+      - "./postgresql/data:/var/lib/postgresql/data"
 
   mongodb:
     image: majidhajric/localhost-mongo:latest
-    container_name: localhost-mongodb
+    container_name: mongodb
+    hostname: mongodb
     build:
       context: ./mongodb
       args:
@@ -51,7 +52,7 @@ services:
     ports:
       - "${MONGODB_PORT}:${MONGODB_PORT}"
     volumes:
-      - "./localhost-env/mongodb/data:/data/db"
+      - "./mongodb/data:/data/db"
 
   authentication-server:
     image: majidhajric/authentication-server:latest
@@ -77,8 +78,9 @@ services:
       - postgres
       - redis
 
+
   zookeeper:
-    image: confluentinc/cp-zookeeper:5.5.0
+    image: confluentinc/cp-zookeeper:latest
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
@@ -86,7 +88,7 @@ services:
       - 2181:2181
 
   kafka:
-    image: confluentinc/cp-kafka:5.5.0
+    image: confluentinc/cp-kafka:latest
     depends_on:
       - zookeeper
     ports:
@@ -98,19 +100,6 @@ services:
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-
-  schema-registry:
-    image: confluentinc/cp-schema-registry:5.5.0
-    hostname: schema-registry
-    container_name: schema-registry
-    depends_on:
-      - kafka
-    ports:
-      - "8081:8081"
-    environment:
-      SCHEMA_REGISTRY_HOST_NAME: schema-registry
-      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: 'kafka:9092'
-      SCHEMA_REGISTRY_LOG4J_ROOT_LOGLEVEL: WARN
 
 networks:
   default:

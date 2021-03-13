@@ -1,39 +1,44 @@
 server:
   port: 8080
+
 spring:
   application:
-    name: scraper
+    name: scraperr
 
   cache:
     type: redis
 
   redis:
     host: localhost
-    port: 6379
+    port: 6370
 
   data:
     mongodb:
-      user: scraper_db_user
-      password: scraper_db_s3cr3t
-      uri: mongodb://localhost:27017/scraper_db
+      database: scraper_db
 
   security:
     oauth2:
       resourceserver:
         jwt:
-          #issuer-uri: http://localhost:8083/auth/realms/scraper
           jwk-set-uri: http://localhost:9090/auth/realms/scraper/protocol/openid-connect/certs
-
 
   jackson:
     date-format: "yyyy-MM-dd'T'HH:mm:ss.SSSX"
 
   kafka:
-    bootstrap-servers: localhost:9092
+    bootstrap-servers: localhost:29092
+    consumer:
+      auto-offset-reset: earliest
+      group-id: scraper
 
 app:
   server:
     config: http://localhost:8080
 
-links.topic.name: links-topic
-state.store.name: popular-tags-store
+links:
+  topic:
+    name: links-topic
+state:
+  store:
+    name: popular-tags-store
+

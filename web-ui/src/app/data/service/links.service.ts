@@ -4,6 +4,7 @@ import {Observable} from 'rxjs';
 import {Link} from '../schema/link';
 import {environment} from '../../../environments/environment';
 import {Page} from '../schema/page';
+import {LinkRequest} from '../schema/link-request';
 
 @Injectable({
   providedIn: 'root'
@@ -29,8 +30,8 @@ export class LinksService {
     return this.httpClient.get<Link>(this.API + '/' + id);
   }
 
-  public saveLink(link: Link) {
-    return this.httpClient.post<any>(this.API, link)
+  public saveLink(linkRequest: LinkRequest) {
+    return this.httpClient.post<LinkRequest>(this.API, linkRequest)
    .subscribe();
   }
 }

@@ -43,7 +43,9 @@ export class UserSessionService implements OnDestroy {
       this.oauthService.loadDiscoveryDocumentAndTryLogin()
         .catch((error) => {
           console.log(error.message);
-        });
+        }).then(isLoggedIn => {
+        this.oauthService.setupAutomaticSilentRefresh();
+      });
     }
   }
 
@@ -56,8 +58,13 @@ export class UserSessionService implements OnDestroy {
       case 'user_profile_loaded':
          this.router.navigate(['/home']);
          break;
+      case 'session_terminated':
+      case 'session_error':
+        this.oauthService.logOut();
+        break;
       case 'logout':
         this.userInfoSubject.next(null);
+        this.router.navigate(['/']);
         break;
       default:
         break;

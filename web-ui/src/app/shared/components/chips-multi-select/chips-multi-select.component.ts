@@ -8,6 +8,8 @@ import {MatChip} from '@angular/material/chips';
 })
 export class ChipsMultiSelectComponent implements OnInit {
 
+  @Input() title: string;
+
   @Input() options: string[] = [];
 
   @Input() values: string[] = [];

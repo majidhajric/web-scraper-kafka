@@ -18,8 +18,8 @@ public class LinkTest {
         String title = "Example";
         String userId = "test";
 
-        Link linkOne = Link.create(userId,uriOne, title, Collections.emptySet());
-        Link linkTwo = Link.create(userId,uriTwo, title, Collections.emptySet());
+        Link linkOne = new Link(userId,uriOne, title, Collections.emptySet());
+        Link linkTwo = new Link(userId,uriTwo, title, Collections.emptySet());
 
         assertEquals(linkOne, linkTwo);
     }

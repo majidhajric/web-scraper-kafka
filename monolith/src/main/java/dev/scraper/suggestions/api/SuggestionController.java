@@ -1,8 +1,10 @@
 package dev.scraper.suggestions.api;
 
-import dev.scraper.common.Link;
+import dev.scraper.common.Suggestion;
+import dev.scraper.suggestions.api.dto.SuggestionResponse;
 import dev.scraper.suggestions.domain.SuggestionService;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -20,20 +22,22 @@ import java.net.URISyntaxException;
 @RestController
 @RequestMapping(path = "/api/suggestions")
 @ControllerAdvice
-public class SuggestionsController {
+public class SuggestionController {
 
     private final SuggestionService suggestionService;
 
-    public SuggestionsController(SuggestionService suggestionService) {
+    public SuggestionController(SuggestionService suggestionService) {
         this.suggestionService = suggestionService;
     }
 
-    @GetMapping
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(code = HttpStatus.OK)
-    public Link getSuggestions(@RequestParam(name = "pageURL") String pageURL, @AuthenticationPrincipal Jwt jwt)
+    public SuggestionResponse getSuggestions(@RequestParam(name = "pageURL") String pageURL, @AuthenticationPrincipal Jwt jwt)
             throws InterruptedException, IOException, URISyntaxException {
         String userId = jwt.getClaim("sub");
-        return suggestionService.createSuggestion(userId, pageURL);
+        Suggestion suggestion = suggestionService.createSuggestion(userId, pageURL);
+
+        return SuggestionResponse.toResponse(suggestion);
     }
 
     @ResponseBody

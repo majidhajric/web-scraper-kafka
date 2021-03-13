@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
 public class LuceneScrapingService implements ScrapingService {
 
     @Override
-    public PageDetails extractKeywords(String pageURL) throws IOException {
+    public PageDetails scrapPage(String pageURL) throws IOException {
         Document document = Jsoup.connect(pageURL).get();
         return getPageKeywords(document);
     }

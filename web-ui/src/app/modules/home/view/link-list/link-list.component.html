@@ -1,7 +1,3 @@
-<div class="spinner-container" *ngIf="dataSource.loading$ | async">
-  <mat-spinner></mat-spinner>
-</div>
-
 <mat-table class="m-3 mt-0 d-flex flex-column flex-grow-1" [dataSource]="dataSource">
 
   <ng-container matColumnDef="Link">

@@ -4,11 +4,7 @@ export interface Link {
 
   timeCreated: Date;
 
-  userId: string;
-
-  pageURL: string;
-
-  pageHash: string;
+  url: string;
 
   title: string;
 

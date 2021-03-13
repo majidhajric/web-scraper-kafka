@@ -35,10 +35,10 @@ export class HomeComponent implements OnInit {
     dialogConfig.maxHeight = 600;
     dialogConfig.panelClass = 'my-custom-dialog-class';
 
-    const dialogRef = this.dialog.open(CreateLinkDialogComponent, dialogConfig);
-
-    dialogRef.afterClosed().subscribe(result => {
-      this.linkListComponent.loadLinks();
+    const dialogRef = this.dialog.open(CreateLinkDialogComponent, dialogConfig)
+      .afterClosed()
+      .subscribe(() => {
+        this.linkListComponent.loadLinks();
     });
   }
 

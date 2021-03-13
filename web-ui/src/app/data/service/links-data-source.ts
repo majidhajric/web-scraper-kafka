@@ -9,11 +9,12 @@ export class LinksDataSource implements DataSource<Link>{
 
   private linkSubject = new BehaviorSubject<Link[]>([]);
   private loadingSubject = new BehaviorSubject<boolean>(false);
-  public loading$ = this.loadingSubject.asObservable();
+  public loading$: Observable<boolean>;
   private countSubject = new BehaviorSubject<number>(0);
   public counter$ = this.countSubject.asObservable();
 
   constructor(private linksService: LinksService) {
+    this.loading$ = this.loadingSubject.asObservable();
   }
 
   connect(collectionViewer: CollectionViewer): Observable<Link[] | ReadonlyArray<Link>> {
@@ -31,8 +32,9 @@ export class LinksDataSource implements DataSource<Link>{
 
     this.linksService.getLinksPage(page, size)
       .pipe(
-        catchError(() => of({} as Page<Link>)),
-        finalize(() => this.loadingSubject.next(false))
+        finalize(() => {
+          this.loadingSubject.next(false);
+        })
       )
       .subscribe((result: Page<Link>) => {
         this.linkSubject.next(result.content);

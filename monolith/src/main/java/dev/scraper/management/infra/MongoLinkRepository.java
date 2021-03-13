@@ -21,5 +21,5 @@ public interface MongoLinkRepository extends MongoRepository<Link, String> {
 
     Page<Link> findAllByUserIdAndTagsContainingOrderByTimeCreatedDesc(String userId, String tag, Pageable pageable);
 
-    Optional<Link> findByUserIdAndPageHash(String userId, String pageHash);
+    Optional<Link> findByUserIdAndHash(String userId, String pageHash);
 }

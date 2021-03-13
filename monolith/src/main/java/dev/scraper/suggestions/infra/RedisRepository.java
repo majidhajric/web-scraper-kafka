@@ -1,6 +1,6 @@
 package dev.scraper.suggestions.infra;
 
-import dev.scraper.common.Link;
+import dev.scraper.common.Suggestion;
 import dev.scraper.suggestions.domain.SuggestionsCache;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -19,13 +19,13 @@ public class RedisRepository implements SuggestionsCache {
     }
 
     @Override
-    public void save(String userId, Link link) {
-        hashOperations.put("USER", userId, link);
+    public void save(String userId, Suggestion suggestion) {
+        hashOperations.put("USER", userId, suggestion);
     }
 
     @Override
-    public Link findById(String userId) {
-        return (Link) hashOperations.get("USER", userId);
+    public Suggestion findById(String userId) {
+        return (Suggestion) hashOperations.get("USER", userId);
     }
 
     @Override

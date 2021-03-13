@@ -5,6 +5,6 @@ import java.net.URISyntaxException;
 
 public interface ScrapingService {
 
-    PageDetails extractKeywords(String pageURL)
+    PageDetails scrapPage(String pageURL)
             throws URISyntaxException, IOException, InterruptedException;
 }
