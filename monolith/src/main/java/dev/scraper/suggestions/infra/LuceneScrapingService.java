@@ -20,9 +20,9 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -80,7 +80,7 @@ public class LuceneScrapingService implements ScrapingService {
                 .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
                 .map(Map.Entry::getKey)
                 .limit(10)
-                .collect(Collectors.toCollection(LinkedHashSet::new));
+                .collect(Collectors.toCollection(TreeSet::new));
     }
 
     private PageDetails getPageKeywords(Document document) {

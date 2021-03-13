@@ -27,9 +27,6 @@ spring:
 
   kafka:
     bootstrap-servers: localhost:29092
-    consumer:
-      auto-offset-reset: earliest
-      group-id: scraper
 
 app:
   server:

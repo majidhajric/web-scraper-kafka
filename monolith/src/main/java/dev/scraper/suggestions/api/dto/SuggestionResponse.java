@@ -4,9 +4,8 @@ import dev.scraper.common.Suggestion;
 import lombok.Getter;
 
 import java.io.Serializable;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
+import java.util.Set;
+import java.util.TreeSet;
 
 @Getter
 public class SuggestionResponse implements Serializable {
@@ -15,9 +14,9 @@ public class SuggestionResponse implements Serializable {
 
     private String title;
 
-    private Collection<String> keywords = new HashSet<>();
+    private Set<String> keywords = new TreeSet<>();
 
-    private Collection<String> tags = new LinkedHashSet<>();
+    private Set<String> tags = new TreeSet<>();
 
     public static SuggestionResponse toResponse(Suggestion suggestion) {
         SuggestionResponse response = new SuggestionResponse();
