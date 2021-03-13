@@ -52,6 +52,7 @@ Other dependencies of this project are:
 2. Redis - for validation
 3. Keycloak - authentication server
 4. Postgres - user database
+5. Kafka - popular Tags state store
 
 ### Running 
 
@@ -69,14 +70,5 @@ To build scraper application run:
 Api documentation page is located at:
 `http://localhost:8080/v3/api-docs`
 
-Following are screenshots of link creation process:  
+There is an Angular client for link management.
 
-![Get Suggestions](./docs/get.jpg) 
-
-And result as JSON which is then used as body to persist link:  
-
-![Suggestions](./docs/suggestions.jpg) 
-
-To gett all user links, there is Pagebale interface in the LinksController:  
-
-![Links](./docs/links.jpg) 
