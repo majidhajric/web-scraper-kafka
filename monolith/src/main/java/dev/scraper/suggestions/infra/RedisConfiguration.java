@@ -1,5 +1,6 @@
 package dev.scraper.suggestions.infra;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,6 +14,12 @@ import java.util.List;
 @EnableCaching
 public class RedisConfiguration {
 
+    @Value("${spring.redis.host}")
+    private String host;
+
+    @Value("${spring.redis.port}")
+    private Integer port;
+
     @Bean
     RedisTemplate<String, List<String>> redisTemplate() {
         RedisTemplate<String, List<String>> redisTemplate = new RedisTemplate<>();
@@ -22,7 +29,7 @@ public class RedisConfiguration {
 
     @Bean
     JedisConnectionFactory jedisConnectionFactory() {
-        RedisStandaloneConfiguration redisStandaloneConfiguration = new RedisStandaloneConfiguration("localhost", 6379);
+        RedisStandaloneConfiguration redisStandaloneConfiguration = new RedisStandaloneConfiguration(host, port);
         return new JedisConnectionFactory(redisStandaloneConfiguration);
     }
 }

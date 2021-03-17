@@ -1,0 +1,13 @@
+{
+  "name": "mongo-links-source",
+  "config": {
+    "connector.class": "com.mongodb.kafka.connect.MongoSourceConnector",
+    "connection.uri": "mongodb://mongodb-1:27017,/mongodb-2:27017",
+    "database": "scraper_db",
+    "collection": "links",
+    "connection.password": "scraper_db_s3cr3t",
+    "connection.user": "scraper_db_user",
+    "topics": "links-topic",
+    "tasks.max": "1"
+  }
+}

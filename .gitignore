@@ -26,3 +26,5 @@ hs_err_pid*
 /mongodb/data/
 /data/
 /postgresql/data/
+/mongodb/data-1/
+/mongodb/data-2/

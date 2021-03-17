@@ -4,20 +4,15 @@ services:
 
   redis:
     image: redis:latest
-    container_name: redis-server
+    container_name: redis
     restart: always
     ports:
       - 6379:6379
 
 
   postgres:
-    image: majidhajric/localhost-postgres:latest
-    container_name: localhost-postgres
-    build:
-      context: ./postgresql
-      args:
-        - PORT=${POSTGRES_PORT}
-    restart: always
+    image: postgres:latest
+    container_name: postgres
     environment:
       - "POSTGRES_PASSWORD=${POSTGRES_PASSWORD}"
       - "POSTGRES_USER=${USER}"
@@ -26,33 +21,53 @@ services:
       - "AUTH_DATABASE_NAME=${AUTHENTICATION_DATABASE_NAME}"
       - "AUTH_DATABASE_USER=${AUTHENTICATION_DATABASE_USER}"
       - "AUTH_DATABASE_PASSWORD=${AUTHENTICATION_DATABASE_PASSWORD}"
-      - "RESOURCE_DATABASE_NAME=${SUGGESTIONS_DATABASE_NAME}"
-      - "RESOURCE_DATABASE_USER=${SUGGESTIONS_DATABASE_USER}"
-      - "RESOURCE_DATABASE_PASSWORD=${SUGGESTIONS_DATABASE_PASSWORD}"
     ports:
-      - "${POSTGRES_PORT}:${POSTGRES_PORT}"
+      - "5432:5432"
     volumes:
-      - "./postgresql/data:/var/lib/postgresql/data"
+      - ./postgresql/data:/var/lib/postgresql/data
+      - ./postgresql/initdb:/docker-entrypoint-initdb.d
 
-  mongodb:
+  mongodb-1:
     image: majidhajric/localhost-mongo:latest
-    container_name: mongodb
-    hostname: mongodb
+    container_name: mongodb-1
     build:
       context: ./mongodb
       args:
         - PORT=${MONGODB_PORT}
-    restart: always
     environment:
       - "UID=1000"
       - "GID=1000"
       - "RESOURCE_DATABASE_NAME=${WEB_SCRAPER_DATABASE_NAME}"
-      - "RESOURCE_DATABASE_USER=${WEB_SCRAPER__DATABASE_USER}"
+      - "RESOURCE_DATABASE_USER=${WEB_SCRAPER_DATABASE_USER}"
       - "RESOURCE_DATABASE_PASSWORD=${WEB_SCRAPER_DATABASE_PASSWORD}"
     ports:
-      - "${MONGODB_PORT}:${MONGODB_PORT}"
+      - "27017:27017"
     volumes:
-      - "./mongodb/data:/data/db"
+      - "./mongodb/data-1:/data/db"
+    command: --replSet rs0 --oplogSize 128
+    healthcheck:
+      test: test $$(echo "rs.initiate().ok || rs.status().ok" | mongo --quiet) -eq 1
+      interval: 10s
+      start_period: 30s
+
+  mongodb-2:
+    image: majidhajric/localhost-mongo:latest
+    container_name: mongodb-2
+    build:
+      context: ./mongodb
+      args:
+        - PORT=${MONGODB_PORT}
+    environment:
+      - "UID=1000"
+      - "GID=1000"
+      - "RESOURCE_DATABASE_NAME=${WEB_SCRAPER_DATABASE_NAME}"
+      - "RESOURCE_DATABASE_USER=${WEB_SCRAPER_DATABASE_USER}"
+      - "RESOURCE_DATABASE_PASSWORD=${WEB_SCRAPER_DATABASE_PASSWORD}"
+    ports:
+      - "27018:27017"
+    volumes:
+      - "./mongodb/data-2:/data/db"
+    command: --replSet rs0 --oplogSize 128
 
   authentication-server:
     image: majidhajric/authentication-server:latest
@@ -68,8 +83,8 @@ services:
       - "KEYCLOAK_USER=${USER}"
       - "KEYCLOAK_PASSWORD=${KEYCLOAK_PASSWORD}"
       - "DB_VENDOR=POSTGRES"
-      - "DB_ADDR=localhost-postgres"
-      - "DB_PORT=${POSTGRES_PORT}"
+      - "DB_ADDR=postgres"
+      - "DB_PORT=5432"
       - "DB_DATABASE=${AUTHENTICATION_DATABASE_NAME}"
       - "DB_USER=${AUTHENTICATION_DATABASE_USER}"
       - "DB_PASSWORD=${AUTHENTICATION_DATABASE_PASSWORD}"
@@ -80,7 +95,8 @@ services:
 
 
   zookeeper:
-    image: confluentinc/cp-zookeeper:latest
+    image: confluentinc/cp-zookeeper:6.1.0
+    container_name: zookeeper
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
@@ -88,18 +104,153 @@ services:
       - 2181:2181
 
   kafka:
-    image: confluentinc/cp-kafka:latest
+    image: confluentinc/cp-kafka:6.1.0
+    container_name: kafka
     depends_on:
       - zookeeper
     ports:
       - 9092:9092
+      - 29092:29092
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
 
-networks:
-  default:
+  schema-registry:
+    image: confluentinc/cp-schema-registry:6.1.0
+    container_name: schema-registry
+    ports:
+      - "8081:8081"
+    environment:
+      SCHEMA_REGISTRY_HOST_NAME: schema-registry
+      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: kafka:9092
+
+  connect:
+    image: confluentinc/cp-server-connect:6.1.0
+    container_name: connect
+    depends_on:
+      - kafka
+      - schema-registry
+    ports:
+      - "8083:8083"
+    environment:
+      CONNECT_BOOTSTRAP_SERVERS: 'kafka:9092'
+      CONNECT_REST_ADVERTISED_HOST_NAME: connect
+      CONNECT_REST_PORT: 8083
+      CONNECT_GROUP_ID: compose-connect-group
+      CONNECT_CONFIG_STORAGE_TOPIC: connect-configs
+      CONNECT_CONFIG_STORAGE_REPLICATION_FACTOR: 1
+      CONNECT_OFFSET_FLUSH_INTERVAL_MS: 10000
+      CONNECT_OFFSET_STORAGE_TOPIC: connect-offsets
+      CONNECT_OFFSET_STORAGE_REPLICATION_FACTOR: 1
+      CONNECT_STATUS_STORAGE_TOPIC: connect-statuses
+      CONNECT_STATUS_STORAGE_REPLICATION_FACTOR: 1
+      CONNECT_KEY_CONVERTER: io.confluent.connect.avro.AvroConverter
+      CONNECT_KEY_CONVERTER_SCHEMA_REGISTRY_URL: 'http://schema-registry:8081'
+      CONNECT_VALUE_CONVERTER: io.confluent.connect.avro.AvroConverter
+      CONNECT_VALUE_CONVERTER_SCHEMA_REGISTRY_URL: 'http://schema-registry:8081'
+      # CLASSPATH required due to CC-2422
+      CLASSPATH: /usr/share/java/monitoring-interceptors/monitoring-interceptors-6.1.0.jar
+      CONNECT_PRODUCER_INTERCEPTOR_CLASSES: "io.confluent.monitoring.clients.interceptor.MonitoringProducerInterceptor"
+      CONNECT_CONSUMER_INTERCEPTOR_CLASSES: "io.confluent.monitoring.clients.interceptor.MonitoringConsumerInterceptor"
+      CONNECT_PLUGIN_PATH: '/usr/share/java,/usr/share/confluent-hub-components/,/connectors/'
+      CONNECT_LOG4J_LOGGERS: org.apache.zookeeper=ERROR,org.I0Itec.zkclient=ERROR,org.reflections=ERROR
+      CONNECT_INTERNAL_KEY_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
+      CONNECT_INTERNAL_VALUE_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
+    command:
+      - bash
+      - -c
+      - |
+        echo "Installing connector plugins"
+        confluent-hub install --no-prompt mongodb/kafka-connect-mongodb:latest
+        echo "Launching Kafka Connect worker"
+        /etc/confluent/docker/run
+    restart: on-failure
+
+  control-center:
+    image: confluentinc/cp-enterprise-control-center:6.1.0
+    container_name: control-center
+    depends_on:
+      - kafka
+      - schema-registry
+      - connect
+      - ksqldb-server
+    ports:
+      - "9021:9021"
+    environment:
+      CONTROL_CENTER_BOOTSTRAP_SERVERS: 'kafka:9092'
+      CONTROL_CENTER_CONNECT_CLUSTER: http://connect:8083
+      CONTROL_CENTER_KSQL_MICROSERVICES_URL: "http://ksqldb-server:8088"
+      CONTROL_CENTER_KSQL_MICROSERVICES_ADVERTISED_URL: "http://0.0.0.0:8088"
+      CONTROL_CENTER_SCHEMA_REGISTRY_URL: "http://schema-registry:8081"
+      CONTROL_CENTER_REPLICATION_FACTOR: 1
+      CONTROL_CENTER_INTERNAL_TOPICS_PARTITIONS: 1
+      CONTROL_CENTER_MONITORING_INTERCEPTOR_TOPIC_PARTITIONS: 1
+      CONTROL_CENTER_DEPRECATED_VIEWS_ENABLE: "true"
+      CONFLUENT_METRICS_TOPIC_REPLICATION: 1
+      PORT: 9021
+    restart: on-failure
+
+  ksqldb-server:
+    image: confluentinc/cp-ksqldb-server:6.1.0
+    container_name: ksqldb-server
+    depends_on:
+      - kafka
+      - connect
+    ports:
+      - "8088:8088"
+    environment:
+      KSQL_CONFIG_DIR: "/etc/ksql"
+      KSQL_BOOTSTRAP_SERVERS: "kafka:9092"
+      KSQL_HOST_NAME: ksqldb-server
+      KSQL_LISTENERS: "http://0.0.0.0:8088"
+      KSQL_AUTO_OFFSET_RESET: "earliest"
+      KSQL_CACHE_MAX_BYTES_BUFFERING: 0
+      KSQL_KSQL_SCHEMA_REGISTRY_URL: "http://schema-registry:8081"
+      KSQL_PRODUCER_INTERCEPTOR_CLASSES: "io.confluent.monitoring.clients.interceptor.MonitoringProducerInterceptor"
+      KSQL_CONSUMER_INTERCEPTOR_CLASSES: "io.confluent.monitoring.clients.interceptor.MonitoringConsumerInterceptor"
+      KSQL_KSQL_CONNECT_URL: "http://connect:8083"
+    restart: on-failure
+
+  scraper:
+    image: majidhajric/scraper:latest
+    build:
+      context: ./monolith
+      dockerfile: Dockerfile
+    container_name: scraper
+    ports:
+    - "8080:8080"
+    environment:
+      PORT: 8080
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: "kafka:9092"
+      SPRING_DATA_MONGODB_URI: "mongodb://mongodb-1:27017,/mongodb-2:27017"
+      SPRING_REDIS_HOST: "redis"
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK_SET_URI: "http://authentication-server:9090/auth/realms/scraper/protocol/openid-connect/certs"
+    links:
+      - kafka
+      - redis
+      - mongodb-1
+      - mongodb-2
+      - authentication-server
+    restart: on-failure
+
+  web-ui:
+    image: majidhajric/web-ui:latest
+    container_name: web-ui
+    build:
+      context: ./web-ui
+      dockerfile: Dockerfile
+    environment:
+      - "PORT=80"
+      - "API_SERVER=http://localhost:8080/api"
+      - "AUTH_SERVER=http://localhost:9090/auth/realms/scraper"
+      - "AUTH_CLIENT_ID=scraper"
+    ports:
+      - "80:80"
+    depends_on:
+      - scraper
+      - authentication-server
+
